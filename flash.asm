@@ -1,4 +1,4 @@
-; Flash in / flash out sequencing via border/background color writes
+; Flash in / flash out sequencing
 
 flash_state   = $25
 flash_timer   = $26
@@ -7,66 +7,65 @@ flash_count   = $27
 TED_BGCOLOR   = $ff15
 TED_BORDERCOL = $ff19
 
-FLASH_INIT_IN:
-    lda #1
-    sta flash_state
-    lda #8
-    sta flash_timer
-    lda #0
-    sta flash_count
-    rts
+FLASH_INIT_IN
+        lda #$01
+        sta flash_state
+        lda #$08
+        sta flash_timer
+        lda #$00
+        sta flash_count
+        rts
 
-FLASH_INIT_OUT:
-    lda #2
-    sta flash_state
-    lda #8
-    sta flash_timer
-    lda #0
-    sta flash_count
-    rts
+FLASH_INIT_OUT
+        lda #$02
+        sta flash_state
+        lda #$08
+        sta flash_timer
+        lda #$00
+        sta flash_count
+        rts
 
-FLASH_UPDATE:
-    lda flash_state
-    beq .idle
+FLASH_UPDATE
+        lda flash_state
+        beq flash_idle
 
-    dec flash_timer
-    bne .idle
+        dec flash_timer
+        bne flash_idle
 
-    lda #8
-    sta flash_timer
+        lda #$08
+        sta flash_timer
 
-    inc flash_count
-    lda flash_count
-    cmp #FLASH_STEPS*2
-    bcc .doToggle
+        inc flash_count
+        lda flash_count
+        cmp #FLASH_STEPS2
+        bcc flash_toggle
 
-    lda #0
-    sta flash_state
-    lda #0
-    sta TED_BGCOLOR
-    sta TED_BORDERCOL
-    rts
+        lda #$00
+        sta flash_state
+        lda #$00
+        sta TED_BGCOLOR
+        sta TED_BORDERCOL
+        rts
 
-.doToggle:
-    and #1
-    beq .dark
+flash_toggle
+        and #$01
+        beq flash_dark
 
-.bright:
-    lda flash_state
-    cmp #1
-    beq .inBright
-    lda #$01
-    bne .write
-.inBright:
-    lda #$0f
-    bne .write
+        lda flash_state
+        cmp #$01
+        beq flash_in_bright
+        lda #$01
+        bne flash_write
+flash_in_bright
+        lda #$0f
+        bne flash_write
 
-.dark:
-    lda #0
+flash_dark
+        lda #$00
 
-.write:
-    sta TED_BGCOLOR
-    sta TED_BORDERCOL
+flash_write
+        sta TED_BGCOLOR
+        sta TED_BORDERCOL
 
-.idle:
-    rts
+flash_idle
+        rts

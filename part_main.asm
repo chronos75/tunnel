@@ -1,65 +1,58 @@
-!source "buildcfg.inc"
-!source "!playerv.asm"
-!source "timing_driver4x.asm"
-!source "effect_wire_mc.asm"
-!source "flash.asm"
+include "buildcfg.inc"
+include "!playerv.asm"
+include "timing_driver4x.asm"
+include "effect_wire_mc.asm"
+include "flash.asm"
 
-* = $1001
-; BASIC: 10 SYS4109
-!word .next
-!word 10
-!byte $9e
-!text "4109"
-!byte 0
-.next:
-!word 0
+        org $1001-2
+        dw $1001
+        dw $100b,0
+        db $9e,"4109",0,0,0
 
-* = $100d
-ENTRY:
-    sei
-    lda #0
-    sta subtick
-    sta frameCounterLo
-    sta frameCounterHi
-    sta phaseCounter
-    sta kickCounter
+        org $100d
+ENTRY
+        sei
+        lda #$00
+        sta subtick
+        sta frameCounterLo
+        sta frameCounterHi
+        sta phaseCounter
+        sta kickCounter
 
-    jsr PLAYER_INIT
-    jsr EFFECT_INIT
-    jsr FLASH_INIT_IN
+        jsr PLAYER_INIT
+        jsr EFFECT_INIT
+        jsr FLASH_INIT_IN
 
-    ; install IRQ
-    lda #<IRQ_HANDLER
-    sta $fffe
-    lda #>IRQ_HANDLER
-    sta $ffff
-    cli
+        lda #<IRQ_HANDLER
+        sta $fffe
+        lda #>IRQ_HANDLER
+        sta $ffff
+        cli
 
-MAIN_LOOP:
-    lda frameCounterHi
-    cmp #>PART_DURATION_FRAMES
-    bcc .run
-    lda frameCounterLo
-    cmp #<PART_DURATION_FRAMES
-    bcc .run
-    jsr FLASH_INIT_OUT
+MAIN_LOOP
+        lda frameCounterHi
+        cmp #PART_DURATION_HI
+        bcc still_run
+        bne do_flash_out
+        lda frameCounterLo
+        cmp #PART_DURATION_LO
+        bcc still_run
 
-.waitOut:
-    lda flash_state
-    bne .waitOut
-!if STANDALONE_TEST = 1 {
-    jmp ENTRY
-}
-!if DEMO_IOLIB_EXO = 1 {
-    rts
-}
+do_flash_out
+        jsr FLASH_INIT_OUT
+wait_out
+        lda flash_state
+        bne wait_out
 
-.run:
-    jmp MAIN_LOOP
+        lda STANDALONE_TEST
+        beq return_demo
+        jmp ENTRY
 
-!if DEMO_IOLIB_EXO = 1 {
-DEMO_LOADER_SLICE:
-    ; called once per frame on subtick0 only
-    ; hook for siziolib+exo decrunch step while music runs
-    rts
-}
+return_demo
+        rts
+
+still_run
+        jmp MAIN_LOOP
+
+DEMO_LOADER_SLICE
+        rts
