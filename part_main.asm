@@ -18,6 +18,7 @@ ENTRY
         jsr PLAYER_INIT
         jsr EFFECT_INIT
         jsr FLASH_INIT_IN
+        jsr DRIVER_INIT
 
         lda irq_handler_vec
         sta $fffe
@@ -58,7 +59,7 @@ DEMO_LOADER_SLICE
 
 ; Place includes in an explicit code segment so AS65 has a defined
 ; load area for all routine bodies and data tables.
-        org $1200
+        org $1100
 include "!playerv.asm"
 include "timing_driver4x.asm"
 include "effect_wire_mc.asm"

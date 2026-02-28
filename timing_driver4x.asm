@@ -1,5 +1,14 @@
 ; 4x timing driver: subtick0 does frame logic, subtick1..3 are sound only.
 
+
+DRIVER_INIT
+        lda #$00
+        sta $ff0b      ; raster line 0
+        lda #$02
+        sta $ff0a      ; enable TED raster IRQ
+        asl $ff09      ; clear any pending TED IRQ
+        rts
+
 subtick        = $20
 frameCounterLo = $21
 frameCounterHi = $22
