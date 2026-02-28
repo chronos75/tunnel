@@ -33,7 +33,7 @@ MAIN_LOOP
         lda frameCounterHi
         cmp #PART_DURATION_HI
         bcc still_run
-        bne do_flash_out
+        bne do_flash_out ; high-byte overflow: duration already exceeded
         lda frameCounterLo
         cmp #PART_DURATION_LO
         bcc still_run
