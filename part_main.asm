@@ -9,6 +9,8 @@ include "buildcfg.inc"
 ENTRY
         sei
         lda #$00
+        sta $ff3f      ; enable RAM so CPU vectors at $fffc-$ffff are writable
+        lda #$00
         sta subtick
         sta frameCounterLo
         sta frameCounterHi
