@@ -16,6 +16,7 @@ ENTRY
         sta kickCounter
 
         jsr EFFECT_INIT
+        jsr EFFECT_VIDEO_INIT
         jsr FLASH_INIT_IN
 
 MAIN_LOOP
@@ -25,6 +26,7 @@ MAIN_LOOP
         sta $ff19      ; flash-only debug marker
 
         jsr FLASH_UPDATE
+        jsr EFFECT_FRAME
 
         inc frameCounterLo
         bne nofc
