@@ -9,7 +9,7 @@ include "buildcfg.inc"
 ENTRY
         sei
         lda #$00
-        sta $ff3f      ; enable RAM so CPU vectors at $fffc-$ffff are writable
+        sta $ff3f      ; enable full RAM mapping for effect-only debug run
         lda #$00
         sta subtick
         sta frameCounterLo
@@ -19,18 +19,9 @@ ENTRY
 
         jsr EFFECT_INIT
         jsr FLASH_INIT_IN
-        jsr DRIVER_INIT
-
-        lda irq_handler_vec
-        sta $fffe
-        lda irq_handler_vec+1
-        sta $ffff
-        cli
-
-irq_handler_vec
-        dw IRQ_HANDLER
 
 MAIN_LOOP
+        jsr DRIVER_4X_STEP
         lda frameCounterHi
         cmp #PART_DURATION_HI
         bcc still_run
