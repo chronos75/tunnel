@@ -33,6 +33,7 @@ MAIN_LOOP
 do_flash_out
         jsr FLASH_INIT_OUT
 wait_out
+        jsr DRIVER_4X_STEP
         lda flash_state
         bne wait_out
 
