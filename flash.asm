@@ -10,7 +10,7 @@ TED_BORDERCOL = $ff19
 FLASH_INIT_IN
         lda #$01
         sta flash_state
-        lda #$01
+        lda #$08
         sta flash_timer
         lda #$00
         sta flash_count
@@ -22,7 +22,7 @@ FLASH_INIT_IN
 FLASH_INIT_OUT
         lda #$02
         sta flash_state
-        lda #$01
+        lda #$08
         sta flash_timer
         lda #$00
         sta flash_count
