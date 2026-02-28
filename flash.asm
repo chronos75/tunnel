@@ -1,8 +1,8 @@
 ; Flash in / flash out sequencing
 
-flash_state   = $25
-flash_timer   = $26
-flash_count   = $27
+flash_state   = $7d
+flash_timer   = $7e
+flash_count   = $7f
 
 TED_BGCOLOR   = $ff15
 TED_BORDERCOL = $ff19
@@ -14,6 +14,9 @@ FLASH_INIT_IN
         sta flash_timer
         lda #$00
         sta flash_count
+        lda #$0f
+        sta TED_BGCOLOR
+        sta TED_BORDERCOL
         rts
 
 FLASH_INIT_OUT

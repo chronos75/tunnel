@@ -1,10 +1,20 @@
 ; 4x timing driver: subtick0 does frame logic, subtick1..3 are sound only.
 
-subtick        = $20
-frameCounterLo = $21
-frameCounterHi = $22
-phaseCounter   = $23
-kickCounter    = $24
+
+DRIVER_INIT
+        lda #$00
+        sta $ff0b      ; raster line 0
+        lda #$02
+        sta $ff0a      ; enable TED raster IRQ
+        lda $ff09      ; clear any pending TED IRQ
+        sta $ff09
+        rts
+
+subtick        = $78
+frameCounterLo = $79
+frameCounterHi = $7a
+phaseCounter   = $7b
+kickCounter    = $7c
 
 IRQ_HANDLER
         pha
@@ -20,7 +30,8 @@ IRQ_HANDLER
         pla
         tax
         pla
-        asl $ff09
+        lda $ff09
+        sta $ff09
         rti
 
 DRIVER_4X_STEP
@@ -35,8 +46,7 @@ DRIVER_4X_STEP
         bne subtick123
 
 subtick0
-        jsr PLAYER
-
+        ; music player temporarily disabled while testing effect-only runtime
         inc frameCounterLo
         bne nocarry
         inc frameCounterHi
@@ -53,10 +63,11 @@ nokick
         jsr DEMO_LOADER_SLICE
 no_loader
 
-        jsr FLASH_UPDATE
-        jsr EFFECT_FRAME
+        ; isolated debug mode: keep driver counters only
+        ; jsr FLASH_UPDATE
+        ; jsr EFFECT_FRAME
         rts
 
 subtick123
-        jsr PLAYER_SOUND
+        ; sound-only subticks disabled together with music player
         rts
