@@ -23,11 +23,14 @@ ENTRY
         jsr EFFECT_INIT
         jsr FLASH_INIT_IN
 
-        lda #<IRQ_HANDLER
+        lda irq_handler_vec
         sta $fffe
-        lda #>IRQ_HANDLER
+        lda irq_handler_vec+1
         sta $ffff
         cli
+
+irq_handler_vec
+        dw IRQ_HANDLER
 
 MAIN_LOOP
         lda frameCounterHi
