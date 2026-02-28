@@ -1,8 +1,4 @@
 include "buildcfg.inc"
-include "!playerv.asm"
-include "timing_driver4x.asm"
-include "effect_wire_mc.asm"
-include "flash.asm"
 
         org $1001-2
         dw $1001
@@ -59,3 +55,11 @@ still_run
 
 DEMO_LOADER_SLICE
         rts
+
+; Place includes in an explicit code segment so AS65 has a defined
+; load area for all routine bodies and data tables.
+        org $1200
+include "!playerv.asm"
+include "timing_driver4x.asm"
+include "effect_wire_mc.asm"
+include "flash.asm"
