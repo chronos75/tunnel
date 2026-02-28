@@ -21,9 +21,36 @@ ENTRY
 MAIN_LOOP
         inc kickCounter
         lda kickCounter
-        sta $ff19      ; baseline diagnostic: border must cycle continuously
-        sta $ff15      ; baseline diagnostic: background follows border
-        jmp MAIN_LOOP
+        and #$0f
+        sta $ff19      ; flash-only debug marker
+
+        jsr FLASH_UPDATE
+
+        inc frameCounterLo
+        bne nofc
+        inc frameCounterHi
+nofc
+        lda frameCounterHi
+        cmp #PART_DURATION_HI
+        bcc MAIN_LOOP
+        bne do_flash_out
+        lda frameCounterLo
+        cmp #PART_DURATION_LO
+        bcc MAIN_LOOP
+
+do_flash_out
+        jsr FLASH_INIT_OUT
+wait_out
+        jsr FLASH_UPDATE
+        lda flash_state
+        bne wait_out
+
+        lda STANDALONE_TEST
+        beq return_demo
+        jmp ENTRY
+
+return_demo
+        rts
 
 DEMO_LOADER_SLICE
         rts
