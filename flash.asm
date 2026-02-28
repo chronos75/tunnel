@@ -14,6 +14,9 @@ FLASH_INIT_IN
         sta flash_timer
         lda #$00
         sta flash_count
+        lda #$0f
+        sta TED_BGCOLOR
+        sta TED_BORDERCOL
         rts
 
 FLASH_INIT_OUT
