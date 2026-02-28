@@ -10,4 +10,4 @@ MUSIC_ZP_BASE    = $70
 ; runtime constants
 PART_DURATION_LO = $60    ; 2400 frames (~48 sec @ 50Hz)
 PART_DURATION_HI = $09
-FLASH_STEPS2     = 6        ; 3 flashes = 6 toggles
+FLASH_STEPS2     = 2        ; debug-fast flash: 1 flash cycle (2 toggles)
