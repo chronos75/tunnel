@@ -9,8 +9,6 @@ include "buildcfg.inc"
 ENTRY
         sei
         lda #$00
-        sta $ff3f      ; enable full RAM mapping for effect-only debug run
-        lda #$00
         sta subtick
         sta frameCounterLo
         sta frameCounterHi
