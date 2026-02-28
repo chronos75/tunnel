@@ -19,13 +19,38 @@ ENTRY
         jsr FLASH_INIT_IN
 
 MAIN_LOOP
-        inc kickCounter
-        lda kickCounter
-        and #$0f
-        sta $ff19      ; heartbeat: confirm main loop is alive
-        jsr FLASH_UPDATE  ; direct call for debug: no subtick dependency
-        jsr EFFECT_FRAME  ; direct call for debug: prove effect path runs
+        inc phaseCounter
+        lda phaseCounter
+        and #$03
+        beq step_flash
+        cmp #$01
+        beq step_effect
+        cmp #$02
+        beq step_driver
+
+step_idle
+        lda #$0b
+        sta $ff19      ; stage 3: idle marker
+        jmp check_duration
+
+step_flash
+        lda #$02
+        sta $ff19      ; stage 0: FLASH_UPDATE
+        jsr FLASH_UPDATE
+        jmp check_duration
+
+step_effect
+        lda #$05
+        sta $ff19      ; stage 1: EFFECT_FRAME
+        jsr EFFECT_FRAME
+        jmp check_duration
+
+step_driver
+        lda #$08
+        sta $ff19      ; stage 2: DRIVER_4X_STEP
         jsr DRIVER_4X_STEP
+
+check_duration
         lda frameCounterHi
         cmp #PART_DURATION_HI
         bcc still_run
@@ -37,7 +62,9 @@ MAIN_LOOP
 do_flash_out
         jsr FLASH_INIT_OUT
 wait_out
-        jsr DRIVER_4X_STEP
+        lda #$0d
+        sta $ff19      ; flash-out wait marker
+        jsr FLASH_UPDATE
         lda flash_state
         bne wait_out
 
