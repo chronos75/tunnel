@@ -1,8 +1,4 @@
 include "buildcfg.inc"
-include "!playerv.asm"
-include "timing_driver4x.asm"
-include "effect_wire_mc.asm"
-include "flash.asm"
 
         org $1001-2
         dw $1001
@@ -19,28 +15,35 @@ ENTRY
         sta phaseCounter
         sta kickCounter
 
-        jsr PLAYER_INIT
         jsr EFFECT_INIT
+        jsr EFFECT_VIDEO_INIT
         jsr FLASH_INIT_IN
 
-        lda #<IRQ_HANDLER
-        sta $fffe
-        lda #>IRQ_HANDLER
-        sta $ffff
-        cli
-
 MAIN_LOOP
+        inc kickCounter
+        lda kickCounter
+        and #$0f
+        sta $ff19      ; flash-only debug marker
+
+        jsr FLASH_UPDATE
+        jsr EFFECT_FRAME
+
+        inc frameCounterLo
+        bne nofc
+        inc frameCounterHi
+nofc
         lda frameCounterHi
         cmp #PART_DURATION_HI
-        bcc still_run
+        bcc MAIN_LOOP
         bne do_flash_out
         lda frameCounterLo
         cmp #PART_DURATION_LO
-        bcc still_run
+        bcc MAIN_LOOP
 
 do_flash_out
         jsr FLASH_INIT_OUT
 wait_out
+        jsr FLASH_UPDATE
         lda flash_state
         bne wait_out
 
@@ -51,8 +54,11 @@ wait_out
 return_demo
         rts
 
-still_run
-        jmp MAIN_LOOP
-
 DEMO_LOADER_SLICE
         rts
+
+; Keep includes contiguous in the same segment so all routines are
+; guaranteed to be present in the loaded PRG image.
+include "timing_driver4x.asm"
+include "effect_wire_mc.asm"
+include "flash.asm"

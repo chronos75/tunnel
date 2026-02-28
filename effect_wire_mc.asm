@@ -1,44 +1,51 @@
-; Multicolor temporal fade effect (as65 syntax)
+; Main effect in a safe text-mode debug presentation.
+; This keeps rendering visible without depending on TED bitmap setup.
 
 BITMAP_BASE = $4000
+SCREEN_BASE = $0c00
+COLOR_BASE  = $0800
+
+EFFECT_VIDEO_INIT
+        ldx #$00
+clear_loop
+        lda #$20
+        sta SCREEN_BASE,x
+        lda #$01
+        sta COLOR_BASE,x
+        inx
+        bne clear_loop
+        rts
 
 EFFECT_INIT
         lda #$00
         sta ef_phase
+        sta ef_prev
         rts
 
 EFFECT_FRAME
-        jsr EFFECT_DRAW_WIREFRAME
-        jsr EFFECT_TEMPORAL_FADE
-        rts
+        ; erase previous cursor
+        ldx ef_prev
+        lda #$20
+        sta SCREEN_BASE,x
+        lda #$01
+        sta COLOR_BASE,x
 
-EFFECT_DRAW_WIREFRAME
-        ldx #$00
-        lda ef_phase
-drawLoop
-        eor BITMAP_BASE,x
-        sta BITMAP_BASE,x
-        clc
-        adc #$13
-        inx
-        cpx #$80
-        bne drawLoop
+        ; draw current cursor
+        ldx ef_phase
+        lda #$51
+        sta SCREEN_BASE,x
+        txa
+        and #$0f
+        sta COLOR_BASE,x
+
+        stx ef_prev
         inc ef_phase
         rts
 
-EFFECT_TEMPORAL_FADE
-        ldx #$00
-fadeLoop
-        lda BITMAP_BASE,x
-        tay
-        lda fadeLUT,y
-        sta BITMAP_BASE,x
-        inx
-        bne fadeLoop
-        rts
-
 ef_phase db $00
+ef_prev  db $00
 
+; Reserved LUT/table section (kept for later bitmap mode path).
 fadeLUT
         db $00,$00,$01,$02,$00,$00,$01,$02,$04,$04,$05,$06,$08,$08,$09,$0a
         db $00,$00,$01,$02,$00,$00,$01,$02,$04,$04,$05,$06,$08,$08,$09,$0a
