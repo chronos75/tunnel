@@ -41,8 +41,8 @@ step_flash
 
 step_effect
         lda #$05
-        sta $ff19      ; stage 1: EFFECT_FRAME
-        jsr EFFECT_FRAME
+        sta $ff19      ; stage 1: EFFECT_FRAME (isolated: call disabled)
+        ; jsr EFFECT_FRAME
         jmp check_duration
 
 step_driver

@@ -63,8 +63,9 @@ nokick
         jsr DEMO_LOADER_SLICE
 no_loader
 
-        jsr FLASH_UPDATE
-        jsr EFFECT_FRAME
+        ; isolated debug mode: keep driver counters only
+        ; jsr FLASH_UPDATE
+        ; jsr EFFECT_FRAME
         rts
 
 subtick123
