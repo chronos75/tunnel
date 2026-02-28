@@ -6,7 +6,8 @@ DRIVER_INIT
         sta $ff0b      ; raster line 0
         lda #$02
         sta $ff0a      ; enable TED raster IRQ
-        asl $ff09      ; clear any pending TED IRQ
+        lda $ff09      ; clear any pending TED IRQ
+        sta $ff09
         rts
 
 subtick        = $20
@@ -29,7 +30,8 @@ IRQ_HANDLER
         pla
         tax
         pla
-        asl $ff09
+        lda $ff09
+        sta $ff09
         rti
 
 DRIVER_4X_STEP
