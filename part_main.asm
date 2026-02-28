@@ -17,7 +17,6 @@ ENTRY
         sta phaseCounter
         sta kickCounter
 
-        jsr PLAYER_INIT
         jsr EFFECT_INIT
         jsr FLASH_INIT_IN
         jsr DRIVER_INIT
@@ -61,9 +60,6 @@ DEMO_LOADER_SLICE
 
 ; Place each included module into its own explicit segment so
 ; AS65 always assembles them into known non-overlapping ranges.
-        org $1100
-include "!playerv.asm"
-
         org $1180
 include "timing_driver4x.asm"
 

@@ -46,8 +46,7 @@ DRIVER_4X_STEP
         bne subtick123
 
 subtick0
-        jsr PLAYER
-
+        ; music player temporarily disabled while testing effect-only runtime
         inc frameCounterLo
         bne nocarry
         inc frameCounterHi
@@ -69,5 +68,5 @@ no_loader
         rts
 
 subtick123
-        jsr PLAYER_SOUND
+        ; sound-only subticks disabled together with music player
         rts
