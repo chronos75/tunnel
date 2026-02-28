@@ -57,10 +57,16 @@ still_run
 DEMO_LOADER_SLICE
         rts
 
-; Place includes in an explicit code segment so AS65 has a defined
-; load area for all routine bodies and data tables.
+; Place each included module into its own explicit segment so
+; AS65 always assembles them into known non-overlapping ranges.
         org $1100
 include "!playerv.asm"
+
+        org $1180
 include "timing_driver4x.asm"
+
+        org $1280
 include "effect_wire_mc.asm"
+
+        org $1400
 include "flash.asm"
