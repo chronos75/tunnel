@@ -10,11 +10,11 @@ DRIVER_INIT
         sta $ff09
         rts
 
-subtick        = $20
-frameCounterLo = $21
-frameCounterHi = $22
-phaseCounter   = $23
-kickCounter    = $24
+subtick        = $78
+frameCounterLo = $79
+frameCounterHi = $7a
+phaseCounter   = $7b
+kickCounter    = $7c
 
 IRQ_HANDLER
         pha
