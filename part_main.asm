@@ -1,4 +1,4 @@
-include "buildcfg.inc"
+	include "buildcfg.inc"
 
         org $1001-2
         dw $1001
@@ -51,10 +51,10 @@ DEMO_LOADER_SLICE
 ; Place each included module into its own explicit segment so
 ; AS65 always assembles them into known non-overlapping ranges.
         org $1180
-include "timing_driver4x.asm"
+	include "timing_driver4x.asm"
 
         org $1280
-include "effect_wire_mc.asm"
+	include "effect_wire_mc.asm"
 
         org $1400
-include "flash.asm"
+	include "flash.asm"
